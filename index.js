@@ -58,8 +58,8 @@ module.exports = klass.extend({
     immediate.call(runner)
     function runner(){
       if(++index >= length) return
-      listeners[index].apply(null, args)
       immediate.call(runner)
+      listeners[index].apply(null, args)
     }
   }
 })

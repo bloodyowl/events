@@ -154,3 +154,26 @@ tape("events, stop listening all events", function(test){
     test.equal(i, -1, "stops listening all events")
   }, 100)
 })
+
+if(typeof window != "undefined") {
+  tape("events, stop listening all events", function(test){
+  
+      var eventClass = events.create()
+        , i = -1, oldError
+  
+      if(typeof window != "undefined") {
+        oldError = window.onerror
+        window.onerror = null
+      }
+      eventClass.listen("foo", function(){
+        throw "foo"
+      })
+      eventClass.listen("foo", function(){
+        test.ok(1, "exceptions do not matter for other callbacks")
+        test.end()
+        window.onerror = oldError
+      })
+      eventClass.fire("foo")
+
+  })
+}
