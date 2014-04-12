@@ -34,7 +34,7 @@ module.exports = klass.extend({
     var listeners, length
     switch (arguments.length) {
       case 0:
-        this.destructor()
+        this._events = {}
       case 1:
         this._events[type] = null
       default:
