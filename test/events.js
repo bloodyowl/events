@@ -2,18 +2,18 @@ var tape = require("tape")
   , events = require("..")
 
 tape("events", function(test){
-  
+
   test.plan(3)
 
   var eventClass = events.create()
     , i = ""
-  
+
   eventClass.listen("foo", function(param1, param2){
     test.equal(param1, "bar", "passes information")
     test.equal(param2, "baz", "passes information (multiple arguments)")
     test.equal(i, "1", "runs asynchronously")
   })
-  
+
   eventClass.fire("foo", "bar", "baz")
   i += "1"
 
@@ -74,7 +74,7 @@ tape("events, listenOnce removal", function(test){
 
   eventClass.stopListening("foo", fail)
   eventClass.fire("foo")
-  
+
   setTimeout(function(){
     test.equal(i, -1, "removed listenedOnce before being executed")
   }, 300)
@@ -112,7 +112,7 @@ tape("events, stop listening", function(test){
     eventClass.stopListening("foo", callback)
   }
   eventClass.listen("foo", callback)
-  
+
   eventClass.fire("foo", "bar", "baz")
 
 })
@@ -124,7 +124,7 @@ tape("events, stop listening", function(test){
 
   var eventClass = events.create()
     , i = -1
-  
+
   eventClass.listen("foo", function(){++i;test.fail()})
   eventClass.listen("foo", function(){++i;test.fail()})
   eventClass.stopListening("foo")
@@ -149,7 +149,7 @@ tape("events, stop listening all events", function(test){
 
   eventClass.fire("foo")
   eventClass.fire("bar")
-  
+
   setTimeout(function(){
     test.equal(i, -1, "stops listening all events")
   }, 100)
@@ -157,10 +157,10 @@ tape("events, stop listening all events", function(test){
 
 if(typeof window != "undefined") {
   tape("events, stop listening all events", function(test){
-  
+
       var eventClass = events.create()
         , i = -1, oldError
-  
+
       if(typeof window != "undefined") {
         oldError = window.onerror
         window.onerror = null
@@ -177,3 +177,16 @@ if(typeof window != "undefined") {
 
   })
 }
+
+tape("fireSync", function(test){
+  var eventClass = events.create()
+    , isSync = false
+  eventClass.fireSync("foo", 4)
+  eventClass.listen("foo", function(value){
+    test.equal(value, 1, "passes values to listener")
+    isSync = true
+  })
+  eventClass.fireSync("foo", 1)
+  test.ok(isSync, "is synchronous")
+  test.end()
+})

@@ -61,5 +61,18 @@ module.exports = klass.extend({
       immediate.call(runner)
       listeners[index].apply(null, args)
     }
+  },
+  fireSync : function(type){
+    var listeners = this._events[type]
+      , length = listeners && listeners.length
+      , args, index = -1
+    if(!length) return
+    args = _slice.call(arguments, 1)
+    runner()
+    function runner(){
+      if(++index >= length) return
+      listeners[index].apply(null, args)
+      runner()
+    }
   }
 })
