@@ -41,8 +41,4 @@ Otherwise, removes all the events listeners.
 
 ### `.emit(type[, args …])`
 
-Triggers asynchronously the `type` events, and passes `args…` as arguments for the listeners.
-
-### `.emitSync(type[, args …])`
-
 Triggers synchronously the `type` events, and passes `args…` as arguments for the listeners.

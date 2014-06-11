@@ -3,7 +3,7 @@ var tape = require("tape")
 
 tape("events", function(test){
 
-  test.plan(3)
+  test.plan(2)
 
   var eventClass = events.create()
     , i = ""
@@ -11,7 +11,6 @@ tape("events", function(test){
   eventClass.on("foo", function(param1, param2){
     test.equal(param1, "bar", "passes information")
     test.equal(param2, "baz", "passes information (multiple arguments)")
-    test.equal(i, "1", "runs asynchronously")
   })
 
   eventClass.emit("foo", "bar", "baz")
@@ -155,38 +154,16 @@ tape("events, stop listening all events", function(test){
   }, 100)
 })
 
-if(typeof window != "undefined") {
-  tape("events, stop listening all events", function(test){
 
-      var eventClass = events.create()
-        , i = -1, oldError
-
-      if(typeof window != "undefined") {
-        oldError = window.onerror
-        window.onerror = null
-      }
-      eventClass.on("foo", function(){
-        throw "foo"
-      })
-      eventClass.on("foo", function(){
-        test.ok(1, "exceptions do not matter for other callbacks")
-        test.end()
-        window.onerror = oldError
-      })
-      eventClass.emit("foo")
-
-  })
-}
-
-tape("emitSync", function(test){
+tape("emit", function(test){
   var eventClass = events.create()
     , isSync = false
-  eventClass.emitSync("foo", 4)
+  eventClass.emit("foo", 4)
   eventClass.on("foo", function(value){
     test.equal(value, 1, "passes values to listener")
     isSync = true
   })
-  eventClass.emitSync("foo", 1)
+  eventClass.emit("foo", 1)
   test.ok(isSync, "is synchronous")
   test.end()
 })

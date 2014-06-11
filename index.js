@@ -56,19 +56,6 @@ module.exports = klass.extend({
     var args, index = -1
     if(!length) return
     args = _slice.call(arguments, 1)
-    immediate.call(runner)
-    function runner(){
-      if(++index >= length) return
-      immediate.call(runner)
-      listeners[index].apply(null, args)
-    }
-  },
-  emitSync : function(type){
-    var listeners = this._events[type]
-    var length = listeners && listeners.length
-    var args, index = -1
-    if(!length) return
-    args = _slice.call(arguments, 1)
     runner()
     function runner(){
       if(++index >= length) return
