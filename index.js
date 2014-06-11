@@ -1,6 +1,6 @@
 var klass = require("bloody-class")
-  , immediate = require("bloody-immediate")
-  , _slice = [].slice
+var immediate = require("bloody-immediate")
+var _slice = [].slice
 
 module.exports = klass.extend({
   constructor : function(){
@@ -9,10 +9,10 @@ module.exports = klass.extend({
   destructor : function(){
     this._events = {}
   },
-  listen : function(type, listener, once){
+  on : function(type, listener, once){
     var listeners = this._events[type] || (this._events[type] = [])
-      , index = -1, length = listeners.length, fn
-      , self = this
+    var index = -1, length = listeners.length, fn
+    var self = this
     while(++index < length) {
       if(listeners[index] === listener) {
         return
@@ -20,18 +20,19 @@ module.exports = klass.extend({
     }
     if(once) {
       fn = function(){
-        self.stopListening(type, listener)
+        self.off(type, listener)
         return listener.apply(null, arguments)
       }
       fn.listener = listener
     }
     listeners.push(fn || listener)
   },
-  listenOnce : function(type, listener){
-    this.listen(type, listener, true)
+  once : function(type, listener){
+    this.on(type, listener, true)
   },
-  stopListening: function(type, listener){
-    var listeners, length
+  off: function(type, listener){
+    var listeners
+    var length
     switch (arguments.length) {
       case 0:
         this._events = {}
@@ -49,10 +50,10 @@ module.exports = klass.extend({
         }
     }
   },
-  fire : function(type){
+  emit : function(type){
     var listeners = this._events[type]
-      , length = listeners && listeners.length
-      , args, index = -1
+    var length = listeners && listeners.length
+    var args, index = -1
     if(!length) return
     args = _slice.call(arguments, 1)
     immediate.call(runner)
@@ -62,10 +63,10 @@ module.exports = klass.extend({
       listeners[index].apply(null, args)
     }
   },
-  fireSync : function(type){
+  emitSync : function(type){
     var listeners = this._events[type]
-      , length = listeners && listeners.length
-      , args, index = -1
+    var length = listeners && listeners.length
+    var args, index = -1
     if(!length) return
     args = _slice.call(arguments, 1)
     runner()

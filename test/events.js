@@ -8,13 +8,13 @@ tape("events", function(test){
   var eventClass = events.create()
     , i = ""
 
-  eventClass.listen("foo", function(param1, param2){
+  eventClass.on("foo", function(param1, param2){
     test.equal(param1, "bar", "passes information")
     test.equal(param2, "baz", "passes information (multiple arguments)")
     test.equal(i, "1", "runs asynchronously")
   })
 
-  eventClass.fire("foo", "bar", "baz")
+  eventClass.emit("foo", "bar", "baz")
   i += "1"
 
 })
@@ -25,41 +25,41 @@ tape("events, execution order", function(test){
 
   var eventClass = events.create()
 
-  eventClass.listen("foo", function(obj){
+  eventClass.on("foo", function(obj){
     test.equal(obj.foo, 0, "passes object")
     ;++obj.foo
   })
-  eventClass.listen("foo", function(obj){
+  eventClass.on("foo", function(obj){
     test.equal(obj.foo, 1, "passes object")
     ;++obj.foo
   })
-  eventClass.listen("foo", function(obj){
+  eventClass.on("foo", function(obj){
     test.equal(obj.foo, 2, "passes object")
     ;++obj.foo
   })
 
-  eventClass.fire("foo", {foo:0})
+  eventClass.emit("foo", {foo:0})
 
 })
 
 
-tape("events, listenOnce", function(test){
+tape("events, once", function(test){
 
   test.plan(1)
 
   var eventClass = events.create()
     , i = -1
 
-  eventClass.listenOnce("foo", function(){
+  eventClass.once("foo", function(){
     test.ok(++i < 1)
-    eventClass.fire("foo")
+    eventClass.emit("foo")
   })
 
-  eventClass.fire("foo")
+  eventClass.emit("foo")
 
 })
 
-tape("events, listenOnce removal", function(test){
+tape("events, once removal", function(test){
 
   test.plan(1)
 
@@ -70,10 +70,10 @@ tape("events, listenOnce removal", function(test){
     ++i
     test.fail()
   }
-  eventClass.listenOnce("foo", fail)
+  eventClass.once("foo", fail)
 
-  eventClass.stopListening("foo", fail)
-  eventClass.fire("foo")
+  eventClass.off("foo", fail)
+  eventClass.emit("foo")
 
   setTimeout(function(){
     test.equal(i, -1, "removed listenedOnce before being executed")
@@ -90,17 +90,17 @@ tape("events, listener duplication", function(test){
 
   function callback(param1, param2){
     test.ok(++i < 1, "prevents listener duplication")
-    eventClass.stopListening(callback)
+    eventClass.off(callback)
   }
-  eventClass.listen("foo", callback)
-  eventClass.listen("foo", callback)
+  eventClass.on("foo", callback)
+  eventClass.on("foo", callback)
 
-  eventClass.fire("foo", "bar", "baz")
+  eventClass.emit("foo", "bar", "baz")
 
 })
 
 
-tape("events, stop listening", function(test){
+tape("events, off", function(test){
 
   test.plan(1)
 
@@ -109,27 +109,27 @@ tape("events, stop listening", function(test){
 
   function callback(param1, param2){
     test.ok(++i < 1, "stops listening with listener reference")
-    eventClass.stopListening("foo", callback)
+    eventClass.off("foo", callback)
   }
-  eventClass.listen("foo", callback)
+  eventClass.on("foo", callback)
 
-  eventClass.fire("foo", "bar", "baz")
+  eventClass.emit("foo", "bar", "baz")
 
 })
 
 
-tape("events, stop listening", function(test){
+tape("events, off", function(test){
 
   test.plan(1)
 
   var eventClass = events.create()
     , i = -1
 
-  eventClass.listen("foo", function(){++i;test.fail()})
-  eventClass.listen("foo", function(){++i;test.fail()})
-  eventClass.stopListening("foo")
+  eventClass.on("foo", function(){++i;test.fail()})
+  eventClass.on("foo", function(){++i;test.fail()})
+  eventClass.off("foo")
 
-  eventClass.fire("foo")
+  eventClass.emit("foo")
   setTimeout(function(){
     test.equal(i, -1, "stops listening all listeners")
   }, 100)
@@ -143,12 +143,12 @@ tape("events, stop listening all events", function(test){
   var eventClass = events.create()
     , i = -1
 
-  eventClass.listen("foo", function(){++i;test.fail()})
-  eventClass.listen("bar", function(){++i;test.fail()})
-  eventClass.stopListening()
+  eventClass.on("foo", function(){++i;test.fail()})
+  eventClass.on("bar", function(){++i;test.fail()})
+  eventClass.off()
 
-  eventClass.fire("foo")
-  eventClass.fire("bar")
+  eventClass.emit("foo")
+  eventClass.emit("bar")
 
   setTimeout(function(){
     test.equal(i, -1, "stops listening all events")
@@ -165,28 +165,28 @@ if(typeof window != "undefined") {
         oldError = window.onerror
         window.onerror = null
       }
-      eventClass.listen("foo", function(){
+      eventClass.on("foo", function(){
         throw "foo"
       })
-      eventClass.listen("foo", function(){
+      eventClass.on("foo", function(){
         test.ok(1, "exceptions do not matter for other callbacks")
         test.end()
         window.onerror = oldError
       })
-      eventClass.fire("foo")
+      eventClass.emit("foo")
 
   })
 }
 
-tape("fireSync", function(test){
+tape("emitSync", function(test){
   var eventClass = events.create()
     , isSync = false
-  eventClass.fireSync("foo", 4)
-  eventClass.listen("foo", function(value){
+  eventClass.emitSync("foo", 4)
+  eventClass.on("foo", function(value){
     test.equal(value, 1, "passes values to listener")
     isSync = true
   })
-  eventClass.fireSync("foo", 1)
+  eventClass.emitSync("foo", 1)
   test.ok(isSync, "is synchronous")
   test.end()
 })

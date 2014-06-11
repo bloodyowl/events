@@ -24,25 +24,25 @@ Creates an event object
 
 Creates an event-object subclass
 
-### `.listen(type, listener[, once])`
+### `.on(type, listener[, once])`
 
 Listens to the `type` event with `listener` as callback.
 `once` defines whether or not the listener should remove itself afterwards.
 
-### `.listenOnce(type, listener)`
+### `.once(type, listener)`
 
 Shortcut for `.listen(type, listener, true)`
 
-### `.stopListening([type [,listener]])`
+### `.off([type [,listener]])`
 
 If `type` and `listener` are passed, removes the given `listener`.
 If only `type` is passed, removes all this type's listeners.
 Otherwise, removes all the events listeners.
 
-### `.fire(type[, args …])`
+### `.emit(type[, args …])`
 
 Triggers asynchronously the `type` events, and passes `args…` as arguments for the listeners.
 
-### `.fireSync(type[, args …])`
+### `.emitSync(type[, args …])`
 
 Triggers synchronously the `type` events, and passes `args…` as arguments for the listeners.
