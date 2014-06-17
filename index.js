@@ -1,5 +1,4 @@
 var klass = require("bloody-class")
-var immediate = require("bloody-immediate")
 var _slice = [].slice
 
 module.exports = klass.extend({
