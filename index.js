@@ -14,7 +14,7 @@ module.exports = klass.extend({
     var self = this
     while(++index < length) {
       if(listeners[index] === listener) {
-        return
+        return this
       }
     }
     if(once) {
@@ -25,9 +25,11 @@ module.exports = klass.extend({
       fn.listener = listener
     }
     listeners.push(fn || listener)
+    return this
   },
   once : function(type, listener){
     this.on(type, listener, true)
+    return this
   },
   off: function(type, listener){
     var listeners
@@ -48,12 +50,15 @@ module.exports = klass.extend({
           }
         }
     }
+    return this
   },
   emit : function(type){
     var listeners = this._events[type]
     var length = listeners && listeners.length
     var args, index = -1
-    if(!length) return
+    if(!length) {
+      return false
+    }
     args = _slice.call(arguments, 1)
     runner()
     function runner(){
@@ -61,5 +66,6 @@ module.exports = klass.extend({
       listeners[index].apply(null, args)
       runner()
     }
+    return true
   }
 })

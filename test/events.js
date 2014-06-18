@@ -3,15 +3,15 @@ var tape = require("tape")
 
 tape("events", function(test){
 
-  test.plan(2)
+  test.plan(3)
 
   var eventClass = events.create()
     , i = ""
 
-  eventClass.on("foo", function(param1, param2){
+  test.equal(eventClass.on("foo", function(param1, param2){
     test.equal(param1, "bar", "passes information")
     test.equal(param2, "baz", "passes information (multiple arguments)")
-  })
+  }), eventClass)
 
   eventClass.emit("foo", "bar", "baz")
   i += "1"
@@ -44,15 +44,15 @@ tape("events, execution order", function(test){
 
 tape("events, once", function(test){
 
-  test.plan(1)
+  test.plan(2)
 
   var eventClass = events.create()
     , i = -1
 
-  eventClass.once("foo", function(){
+  test.equal(eventClass.once("foo", function(){
     test.ok(++i < 1)
     eventClass.emit("foo")
-  })
+  }), eventClass)
 
   eventClass.emit("foo")
 
@@ -60,7 +60,7 @@ tape("events, once", function(test){
 
 tape("events, once removal", function(test){
 
-  test.plan(1)
+  test.plan(2)
 
   var eventClass = events.create()
     , i = -1
@@ -71,7 +71,7 @@ tape("events, once removal", function(test){
   }
   eventClass.once("foo", fail)
 
-  eventClass.off("foo", fail)
+  test.equal(eventClass.off("foo", fail), eventClass)
   eventClass.emit("foo")
 
   setTimeout(function(){
@@ -163,7 +163,8 @@ tape("emit", function(test){
     test.equal(value, 1, "passes values to listener")
     isSync = true
   })
-  eventClass.emit("foo", 1)
+  test.equal(eventClass.emit("foo", 1), true, "returns true if had handlers")
+  test.equal(eventClass.emit("bar", 1), false, "returns false if had no handlers")
   test.ok(isSync, "is synchronous")
   test.end()
 })
