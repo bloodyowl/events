@@ -1,5 +1,7 @@
 # events
 
+[![Build Status](https://travis-ci.org/bloodyowl/events.svg)](https://travis-ci.org/bloodyowl/events)
+
 [![browser support](https://ci.testling.com/bloodyowl/events.png)](https://ci.testling.com/bloodyowl/events)
 
 ## install
