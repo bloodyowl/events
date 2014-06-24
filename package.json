@@ -1,7 +1,7 @@
 {
   "name": "bloody-events",
-  "version": "1.2.0",
-  "description": "",
+  "version": "1.2.1",
+  "description": "events in node and the browser",
   "main": "index.js",
   "directories": {
     "test": "test"

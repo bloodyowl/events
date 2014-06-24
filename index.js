@@ -54,17 +54,19 @@ module.exports = klass.extend({
   },
   emit : function(type){
     var listeners = this._events[type]
-    var length = listeners && listeners.length
-    var args, index = -1
+    var length
+    var args = _slice.call(arguments, 1)
+    var index = -1
+    if(!listeners) {
+      return false
+    }
+    listeners = listeners.concat()
+    length = listeners.length
     if(!length) {
       return false
     }
-    args = _slice.call(arguments, 1)
-    runner()
-    function runner(){
-      if(++index >= length) return
+    while(++index < length) {
       listeners[index].apply(null, args)
-      runner()
     }
     return true
   }
