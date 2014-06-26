@@ -31,6 +31,63 @@ Creates an event-object subclass
 Listens to the `type` event with `listener` as callback.
 `once` defines whether or not the listener should remove itself afterwards.
 
+#### `listener`
+
+A listener can either be a function or an object containing a `handleEvent` interface.
+
+```javascript
+events.on("user:log", function(username){
+  model.set({
+    username : username
+  })
+})
+
+// or
+
+var model = model
+  .extend({
+    getDefaults : function(){
+      return {
+        username : ""
+      }
+    },
+    handleEvent : function(username){
+      this.set({
+        username : username
+      })
+    }
+  })
+  .create()
+events.on("user:log", model)
+
+// or
+
+var model = model
+  .extend({
+    getDefaults : function(){
+      return {
+        username : "",
+        isThere : true
+      }
+    },
+    handleEvent : {
+      "user:log" : function(username){
+        this.set({
+          username : username
+        })
+      },
+      "user:leave" : function(){
+        this.set({
+          isThere : false
+        })
+      }
+    }
+  })
+  .create()
+
+events.on("user:log", model)
+```
+
 chainable, returns `this`
 
 ### `.once(type, listener)`

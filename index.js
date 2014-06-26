@@ -1,73 +1,27 @@
 var klass = require("bloody-class")
-var _slice = [].slice
+var store = require("./lib/store")
+var slice = [].slice
 
 module.exports = klass.extend({
   constructor : function(){
-    this._events = {}
+    this._events = store.create()
   },
   destructor : function(){
-    this._events = {}
+    this._events.destroy()
   },
-  on : function(type, listener, once){
-    var listeners = this._events[type] || (this._events[type] = [])
-    var index = -1, length = listeners.length, fn
-    var self = this
-    while(++index < length) {
-      if(listeners[index] === listener) {
-        return this
-      }
-    }
-    if(once) {
-      fn = function(){
-        self.off(type, listener)
-        return listener.apply(null, arguments)
-      }
-      fn.listener = listener
-    }
-    listeners.push(fn || listener)
+  on : function(type, listener){
+    this._events.push(type, listener)
     return this
   },
   once : function(type, listener){
-    this.on(type, listener, true)
+    this._events.push(type, listener, true)
     return this
   },
-  off: function(type, listener){
-    var listeners
-    var length
-    switch (arguments.length) {
-      case 0:
-        this._events = {}
-      case 1:
-        this._events[type] = null
-      default:
-        listeners = this._events[type]
-        length = listeners && listeners.length
-        if(!length) return
-        while(--length > -1) {
-          if(listeners[length] === listener || listeners[length].listener === listener) {
-            listeners.splice(length, 1)
-            break
-          }
-        }
-    }
+  off : function(){
+    this._events.remove.apply(this._events, arguments)
     return this
   },
   emit : function(type){
-    var listeners = this._events[type]
-    var length
-    var args = _slice.call(arguments, 1)
-    var index = -1
-    if(!listeners) {
-      return false
-    }
-    listeners = listeners.concat()
-    length = listeners.length
-    if(!length) {
-      return false
-    }
-    while(++index < length) {
-      listeners[index].apply(null, args)
-    }
-    return true
+    return this._events.loop(type, slice.call(arguments, 1))
   }
 })

@@ -168,3 +168,39 @@ tape("emit", function(test){
   test.ok(isSync, "is synchronous")
   test.end()
 })
+
+tape("handleEvent method", function(test){
+  var eventClass = events.create()
+    , isSync = false
+    , object = {
+        handleEvent : function(value){
+          test.equal(this, object)
+          test.equal(value, 1)
+        }
+      }
+  eventClass.on("foo", object)
+  test.equal(eventClass.emit("foo", 1), true, "returns true")
+  eventClass.off("foo", object)
+  test.equal(eventClass.emit("foo", 1), false, "returns false")
+  test.end()
+})
+
+tape("handleEvent object", function(test){
+  var eventClass = events.create()
+    , isSync = false
+    , object = {
+        handleEvent : {
+          "foo" : function(value){
+            test.equal(this, object)
+            test.equal(value, 1)
+          }
+        }
+      }
+  eventClass.on("foo", object)
+  eventClass.on("bar", object)
+  test.equal(eventClass.emit("foo", 1), true, "returns true")
+  test.equal(eventClass.emit("bar", 1), false, "returns false")
+  eventClass.off("foo", object)
+  test.equal(eventClass.emit("foo", 1), false, "returns false")
+  test.end()
+})
